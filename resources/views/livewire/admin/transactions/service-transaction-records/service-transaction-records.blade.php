@@ -1,0 +1,217 @@
+<div>
+    <div class="page-content">
+        <div class="row">
+            <div class="col-md-12 grid-margin">
+                <div class="card border rounded">
+                    <div class="card-header bg-dark text-white">
+                        <h3 class="text-center">Services Transaction Records</h3>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end mb-1">
+                            <!-- <button type="button" class="btn btn-success float-end mb-2" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                                Add Service
+                            </button> -->
+                            <div class="col-2 d-flex p-2 ">
+                                <h4>
+                                    @if($total_service_revenue->total_service_revenue)Total Revenue: {{number_format($total_service_revenue->total_service_revenue,2)}} @endif
+                                </h4>
+                            </div>
+                            <div class="col-1 mx-2">
+                                <select name="" id="" class="form-select " wire:model.live="filters.year">
+                                    <option selected value="">Select Year</option>
+                                    @foreach($years as $key =>$value)
+                                        <option value="{{$value->year}}">{{$value->year}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2 mx-2">
+                                <select name="" id="" class="form-select " wire:model.live="filters.college_id">
+                                    <option selected value="">Select College</option>
+                                    @foreach($colleges_data as $key =>$value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-2 mx-2">
+                                <select name="" id="" class="form-select " wire:model.live="filters.department_id">
+                                    <option selected value="">Select Department</option>
+                                    @foreach($departments_data as $key =>$value)
+                                        <option value="{{$value->id}}">{{$value->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-1  ">
+                                <button class="btn btn-secondary" wire:click="downloadPDF()">
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="shoppingCart" class="table-condensed table text-black">
+                                <thead>
+                                    <tr>
+                                        <th style="width:20%">Track No.</th>
+                                        <th style="width:12%">Account Name</th>
+                                        <th style="width:12%" >College</th>
+                                        <th style="width:12%" >Department</th>
+                                        <th style="width:12%" class="text-center">Status</th>
+                                        <th style="width:12%" >Total</th>
+                                        <th style="width:12%" class="align-middle text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($availed_services as $key =>$value)
+                                    <tr>
+                                        <td data-th="Price" class="align-middle">Track No: {{str_pad($value->id, 8, '0', STR_PAD_LEFT)}}</td>
+                                        <td data-th="Price" class="align-middle">{{$value->first_name.' '.$value->middle_name.' '.$value->last_name}}</td>
+                                        <td data-th="Price" class="align-middle">{{$value->college_name}}</td>
+                                        <td data-th="Price" class="align-middle">{{$value->department_name}}</td>
+                                        <td data-th="Price" class="align-middle text-center">{{$value->service_status}}</td>
+                                        <td data-th="Price" class="align-middle">{{number_format($value->total,2)}}</td>
+                                        <td class="align-middle text-center">
+                                            <button class="btn btn-primary btn-sm" wire:click="view_availed_service({{$value->id}},'viewModalToggler')">
+                                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i> View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="42" class="text-center text-dark">NO DATA</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination-container mt-3">
+                            <ul class="pagination">
+                                <li><a href="{{ $availed_services->previousPageUrl() }}">Previous</a></li>
+                                @foreach ($availed_services->getUrlRange(1, $availed_services->lastPage()) as $page => $url)
+                                    <li class="{{ $page == $availed_services->currentPage() ? 'active' : '' }}">
+                                        <a href="{{ $url }}">{{ $page }}</a>
+                                    </li>
+                                @endforeach
+                                <li><a href="{{ $availed_services->nextPageUrl() }}">Next</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-success me-md-2" data-bs-toggle="modal" data-bs-target="#viewModal" id="viewModalToggler" style="display:none">Add</button>
+    <div wire:ignore.self class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content" >
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="viewModalLabel">Service Details</h5>
+                    <button type="button" class="close text-light" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body bg-white text-black">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center align-items-center mb-4">
+                            <div class="col-6 col-md-3 text-center">
+                                <img class="img-fluid rounded-circle mb-2" src="{{url('landingpage')}}/assets/images/wmsu.png" alt="University Logo" style="max-width: 100px;">
+                            </div>
+                            <div class="col-6 col-md-3 text-center">
+                                <span>Western Mindanao State University</span><br>
+                                <h5>UNIVERSITY PRESS</h5>
+                                <span>Zamboanga City</span>
+                            </div>
+                            <div class="col-6 col-md-3 text-center">
+                                <img class="img-fluid rounded-circle mb-2" src="{{url('assets')}}/logo/upress-logo.png" alt="University Logo" style="max-width: 100px;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mt-3 text-start">
+                                <div class="mb-2">
+                                    <p><strong>Service ID:</strong> @if($service_availed['availed_services']) {{str_pad($service_availed['availed_services']->id, 8, '0', STR_PAD_LEFT)}} @endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>Service Status:</strong> @if($service_availed['availed_services']) {{$service_availed['availed_services']->service_status}} @endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>Customer Name:</strong> @if($service_availed['availed_services']){{$service_availed['availed_services']->first_name.' '.$service_availed['availed_services']->middle_name.' '.$service_availed['availed_services']->last_name}}@endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>College:</strong>@if($service_availed['availed_services']) {{$service_availed['availed_services']->college_name}} @endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>Department :</strong>@if($service_availed['availed_services']) {{$service_availed['availed_services']->department_name}} @endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>Avail Service Date :</strong>@if($service_availed['availed_services']) {{date_format(date_create($service_availed['availed_services']->date_created),"M d, Y h:i a")}} @endif</p>
+                                </div>
+                                <div class="mb-2">
+                                    <p><strong>Total Amount:</strong> @if(isset($service_availed['availed_services']->total_price)) {{number_format($service_availed['availed_services']->total_price, 2, '.', ',')}} @endif</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="table-responsive">
+                                <table id="" class="table ">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">Image</th>
+                                                <th>Service Name</th>
+                                                <th >Service Desc</th>
+                                                <th >Quantity</th>
+                                                <th >Price / Unit</th>
+                                                <th >Partial Price</th>
+                                                <th >Remarks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                                $total = 0;
+                                                $valid_cart = true;
+                                            ?>
+                                            @forelse($service_availed['availed_service_items']  as $key => $value )
+                                                <tr>
+                                                    <th scope="row" class="align-middle">{{$key +1 }}</th>
+                                                    <td class="text-center align-middle">
+                                                        <img src="{{asset('storage/content/services/'.$value->service_image)}}" alt="Product Image"  style="object-fit: cover;width:100px; max-height: 100px;">
+                                                    </td>
+                                                    <td class="align-middle">{{$value->service_name}}</td>
+                                                    <td class="align-middle">{{$value->service_description}}</td>
+                                                    <td class="align-middle">
+                                                        <input type="number"  class="form-control" wire:change="update_total_price()" wire:model="service_availed.availed_service_items.{{$key}}.quantity">
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <input type="number"  class="form-control" wire:change="update_total_price()" step="0.01" wire:model="service_availed.availed_service_items.{{$key}}.price_per_unit">
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <input type="text"  class="form-control bg-white" disabled wire:model="service_availed.availed_service_items.{{$key}}.total_price">
+                                                    </td>
+                                                    <td class="align-middle" class="form-control" >
+                                                        <textarea type="text" value="{{$value->remarks}}" wire:model="service_availed.availed_service_items.{{$key}}.remarks"></textarea>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="42" class="text-center text-dark">NO DATA</td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            
+                <div class="modal-footer bg-white text-black">
+                    <a href="#" class="btn btn-primary">Download PDF</a>
+                    <a href="#" class="btn btn-secondary">Print</a>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div> 
+    </div>
+    
+</div>
